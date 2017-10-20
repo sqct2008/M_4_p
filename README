@@ -1,18 +1,20 @@
-Name:
+Name:Jingbei Liu
 
-Course:
+Course:8270
 
-Clemson Email Address:
+Clemson Email Address:ljingbe@clemson.edu
 
-Project no:
+Project no:3
 
-Project due date:
+Project due date:10/20/2017
 
-Project description:
+Project description: draw some animation and get familiar with SDL2.0, iterator, singleton, parallax, base class, etc.
 
-The easiest part of this project:
+The easiest part of this project: I have no idea...
 
-Problems that I had in completing this project:
+Problems that I had in completing this project: try to make it efficient and modify the structure of MultiSprite and Engine.
+
+The images comes from below:
 
 http://www.wallpaperup.com/40195/Anime_Drawing_Clouds_Kite_Ocean_Beach_Child_original_sky_flowers_girl.html
 http://i.imgur.com/MdNGOsU.png

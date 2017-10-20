@@ -1,6 +1,6 @@
 <?xml version = "1.0"?>
 <GameData>
-<!-- screenTitle is also used to identify you and your animation. 
+<!-- screenTitle is also used to identify you and your animation.
      So make sure to include your name as part of the screenTitle -->
 <title>The Tracker Framework</title>
 <maxStringSize>50</maxStringSize>
@@ -8,9 +8,9 @@
 <frameCapOn>true</frameCapOn>
 <period>17</period>
 
-<makeVideo>true</makeVideo>
+<makeVideo>false</makeVideo>
 
-<maxFrames>300</maxFrames>
+<maxFrames>900</maxFrames>
 <username>Jingbei</username>
 
 <view>
