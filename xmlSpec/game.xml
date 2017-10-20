@@ -8,7 +8,7 @@
 <frameCapOn>true</frameCapOn>
 <period>17</period>
 
-<makeVideo>false</makeVideo>
+<makeVideo>true</makeVideo>
 
 <maxFrames>300</maxFrames>
 <username>Jingbei</username>
@@ -20,20 +20,26 @@
 
 <world>
   <width>2200</width>
-  <height>900</height>
+  <height>600</height>
 </world>
 
-<back>
+<sky>
   <file>assets/sky.png</file>
-  <factor>2</factor>
+  <factor>3</factor>
   <transparency>false</transparency>
-</back>
+</sky>
 
-<front>
+<mountain>
   <file>assets/Mountain.png</file>
+  <factor>2</factor>
+  <transparency>true</transparency>
+</mountain>
+
+<grass>
+  <file>assets/Grass.png</file>
   <factor>1</factor>
   <transparency>true</transparency>
-</front>
+</grass>
 
 <font name="font">
   <file>fonts/arial.ttf</file>
@@ -44,10 +50,56 @@
   <alpha>0</alpha>
 </font>
 
+<drawableItem>
+  <numOfItem>5</numOfItem>
+  <multiSprite_list>yellowBird,redBird,greenBird,SpinningStar</multiSprite_list>
+  <sprite_list>YellowStar</sprite_list>
+</drawableItem>
+
+<yellowBird>
+  <file>assets/yellowbird.png</file>
+  <startLoc x="50" y="140"/>
+  <frames>8</frames>
+  <actions>1</actions>
+  <imageWidth>32</imageWidth>
+  <imageHeight>30</imageHeight>
+  <frameInterval>100</frameInterval>
+  <speedX>350</speedX>
+  <speedY>250</speedY>
+  <transparency>false</transparency>
+</yellowBird>
+
+<redBird>
+  <file>assets/redbird.png</file>
+  <startLoc x="50" y="140"/>
+  <frames>8</frames>
+  <actions>1</actions>
+  <imageWidth>31</imageWidth>
+  <imageHeight>27</imageHeight>
+  <frameInterval>100</frameInterval>
+  <speedX>-250</speedX>
+  <speedY>150</speedY>
+  <transparency>false</transparency>
+</redBird>
+
+<greenBird>
+  <file>assets/greenbird.png</file>
+  <startLoc x="50" y="140"/>
+  <frames>4</frames>
+  <actions>2</actions>
+  <imageWidth>125</imageWidth>
+  <imageHeight>125</imageHeight>
+  <frameInterval>300</frameInterval>
+  <speedX>350</speedX>
+  <speedY>150</speedY>
+  <transparency>false</transparency>
+</greenBird>
+
 <SpinningStar>
   <file>assets/spinstar.png</file>
   <startLoc x="50" y="140"/>
   <frames>4</frames>
+  <actions>1</actions>
   <imageWidth>32</imageWidth>
   <imageHeight>32</imageHeight>
   <frameInterval>50</frameInterval>
@@ -63,34 +115,5 @@
   <speedY>300</speedY>
   <transparency>false</transparency>
 </YellowStar>
-
-<drawableItem>
-  <numOfItem>1</numOfItem>
-  <drawable_name_list>yellowBird,redBird</drawable_name_list>
-</drawableItem>
-
-<yellowBird>
-  <file>assets/yellowbird.png</file>
-  <startLoc x="50" y="140"/>
-  <frames>8</frames>
-  <imageWidth>32</imageWidth>
-  <imageHeight>30</imageHeight>
-  <frameInterval>100</frameInterval>
-  <speedX>350</speedX>
-  <speedY>250</speedY>
-  <transparency>false</transparency>
-</yellowBird>
-
-<redBird>
-  <file>assets/redbird.png</file>
-  <startLoc x="50" y="140"/>
-  <frames>8</frames>
-  <imageWidth>31</imageWidth>
-  <imageHeight>27</imageHeight>
-  <frameInterval>100</frameInterval>
-  <speedX>-250</speedX>
-  <speedY>150</speedY>
-  <transparency>false</transparency>
-</redBird>
 
 </GameData>

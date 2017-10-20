@@ -29,8 +29,11 @@ public:
 protected:
   std::vector<Image *> images;
 
+  enum Actions { right, left };
   unsigned currentFrame;
+  Actions currentAction;
   unsigned numberOfFrames;
+  unsigned numberOfActions;
   unsigned frameInterval;
   float timeSinceLastFrame;
   int worldWidth;

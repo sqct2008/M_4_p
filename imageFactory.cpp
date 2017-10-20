@@ -29,18 +29,18 @@ ImageFactory::~ImageFactory() {
 
 
   // Free multi-image containers
-  for ( auto surfaces : multiSurfaces ) {
+  for ( auto& surfaces : multiSurfaces ) {
     for (unsigned int i = 0; i < surfaces.second.size(); ++i) {
       SDL_FreeSurface( surfaces.second[i] );
     }
   }
-  for ( auto textures : multiTextures ) {
+  for ( auto& textures : multiTextures ) {
     for (unsigned int i = 0; i < textures.second.size(); ++i) {
       SDL_DestroyTexture( textures.second[i] );
     }
   }
 
-  for ( auto images : multiImages ) {
+  for ( auto& images : multiImages ) {
     std::cout << "deleting " << images.first << std::endl;
     for (unsigned int i = 0; i < images.second.size(); ++i) {
       delete images.second[i];
@@ -88,15 +88,16 @@ std::vector<Image*> ImageFactory::getImages(const std::string& name) {
 
   // It wasn't in the map, so we have to make the vector of Images:
   unsigned numberOfFrames = gdata.getXmlInt(name+"/frames");
+  unsigned numberOfActions = gdata.getXmlInt(name+"/actions");
   std::vector<Image*> images;
   std::vector<SDL_Surface*> surfaces;
   std::vector<SDL_Texture*> textures;
-  images.reserve(numberOfFrames);
-  surfaces.reserve(numberOfFrames);
-  textures.reserve(numberOfFrames);
+  images.reserve(numberOfFrames * numberOfActions);
+  surfaces.reserve(numberOfFrames * numberOfActions);
+  textures.reserve(numberOfFrames * numberOfActions);
 
   int width = spriteSurface->w/numberOfFrames;
-  int height = spriteSurface->h;
+  int height = spriteSurface->h/numberOfActions;
 
   if(  gdata.checkTag(name+"/imageWidth") 
     && gdata.checkTag(name+"/imageHeight") ){
@@ -106,17 +107,19 @@ std::vector<Image*> ImageFactory::getImages(const std::string& name) {
 
   SpriteSheet sheet(spriteSurface,width,height);
 
-  for (unsigned i = 0; i < numberOfFrames; ++i) {
-    SDL_Surface* surface = sheet[i];
-    if ( transparency ) {
-      int keyColor = SDL_MapRGBA(spriteSurface->format, 255, 0, 255, 255);
-      SDL_SetColorKey(surface, SDL_TRUE, keyColor);
+  for (unsigned i = 0; i < numberOfActions; ++i) {
+    for(unsigned j = 0; j < numberOfFrames; ++j){
+      SDL_Surface* surface = sheet(j,i);
+      if ( transparency ) {
+        int keyColor = SDL_MapRGBA(spriteSurface->format, 255, 0, 255, 255);
+        SDL_SetColorKey(surface, SDL_TRUE, keyColor);
+      }
+      SDL_Texture* texture = 
+        SDL_CreateTextureFromSurface(renderContext->getRenderer(),surface);
+      surfaces.push_back( surface );
+      textures.push_back( texture );
+      images.push_back( new Image(surface, texture) );
     }
-    SDL_Texture* texture = 
-      SDL_CreateTextureFromSurface(renderContext->getRenderer(),surface);
-    surfaces.push_back( surface );
-    textures.push_back( texture );
-    images.push_back( new Image(surface, texture) );
   }
   multiSurfaces[name] = surfaces;
   multiTextures[name] = textures;

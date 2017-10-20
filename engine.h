@@ -23,13 +23,15 @@ private:
 
   SDL_Renderer * const renderer;
   //std::vector<World> worlds;
-  World worldF;
-  World worldB;
+  World worldSky;
+  World worldMountain;
+  World worldGrass;
   Viewport& viewport;
 
-  Drawable* star;
-  Drawable* spinningStar;
+//  Drawable* star;
+//  Drawable* spinningStar;
   int currentSprite;
+  int num_of_drawable = 0;
 
   std::vector<Drawable*> items_drawable;
 

@@ -5,7 +5,7 @@
 void MultiSprite::advanceFrame(Uint32 ticks) {
 	timeSinceLastFrame += ticks;
 	if (timeSinceLastFrame > frameInterval) {
-    currentFrame = (currentFrame+1) % numberOfFrames;
+    currentFrame = currentAction * numberOfFrames + (currentFrame+1) % numberOfFrames;
 		timeSinceLastFrame = 0;
 	}
 }
@@ -20,7 +20,9 @@ MultiSprite::MultiSprite( const std::string& name) :
   images( RenderContext::getInstance()->getImages(name) ),
 
   currentFrame(0),
+  currentAction(right),
   numberOfFrames( Gamedata::getInstance().getXmlInt(name+"/frames") ),
+  numberOfActions( Gamedata::getInstance().getXmlInt(name+"/actions") ),
   frameInterval( Gamedata::getInstance().getXmlInt(name+"/frameInterval")),
   timeSinceLastFrame( 0 ),
   worldWidth(Gamedata::getInstance().getXmlInt("world/width")),
@@ -31,7 +33,9 @@ MultiSprite::MultiSprite(const MultiSprite& s) :
   Drawable(s), 
   images(s.images),
   currentFrame(s.currentFrame),
+  currentAction(s.currentAction),
   numberOfFrames( s.numberOfFrames ),
+  numberOfActions( s.numberOfActions ),
   frameInterval( s.frameInterval ),
   timeSinceLastFrame( s.timeSinceLastFrame ),
   worldWidth( s.worldWidth ),
@@ -42,7 +46,9 @@ MultiSprite& MultiSprite::operator=(const MultiSprite& s) {
   Drawable::operator=(s);
   images = (s.images);
   currentFrame = (s.currentFrame);
+  currentAction = (s.currentAction);
   numberOfFrames = ( s.numberOfFrames );
+  numberOfActions = ( s.numberOfActions );
   frameInterval = ( s.frameInterval );
   timeSinceLastFrame = ( s.timeSinceLastFrame );
   worldWidth = ( s.worldWidth );
@@ -69,9 +75,20 @@ void MultiSprite::update(Uint32 ticks) {
 
   if ( getX() < 0) {
     setVelocityX( fabs( getVelocityX() ) );
+    if( numberOfActions > 1 ){
+      if( currentAction == left ){
+        currentAction = right;
+        //currentAction %= numberOfActions;
+      }
+    }
   }
   if ( getX() > worldWidth-getScaledWidth()) {
     setVelocityX( -fabs( getVelocityX() ) );
+    if( numberOfActions > 1 ){
+      if( currentAction == right ){
+        currentAction = left;
+        //currentAction %= numberOfActions;
+      }
+    }
   }  
-
 }
