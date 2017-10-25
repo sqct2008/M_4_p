@@ -29,7 +29,7 @@ public:
 protected:
   std::vector<Image *> images;
 
-  enum Actions { right, left };
+  enum Actions { goRight, goLeft };
   unsigned currentFrame;
   Actions currentAction;
   unsigned numberOfFrames;

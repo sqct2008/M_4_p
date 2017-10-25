@@ -1,12 +1,14 @@
 #include <vector>
 #include <SDL.h>
-#include <sstream>
 #include "ioMod.h"
 #include "renderContext.h"
 #include "clock.h"
 #include "world.h"
 #include "viewport.h"
-#include "splitString.h"
+
+class Player;
+class SmartSprite;
+class CollisionStrategy;
 
 class Engine {
 public:
@@ -28,12 +30,19 @@ private:
   World worldGrass;
   Viewport& viewport;
 
-//  Drawable* star;
-//  Drawable* spinningStar;
   int currentSprite;
   int num_of_drawable = 0;
+  int num_of_sprite = 0;
+  int num_of_multiSprite = 0;
+  int num_of_player = 0;
+  int num_of_smartItem = 0;
 
+  Player* player;
   std::vector<Drawable*> items_drawable;
+  std::vector<CollisionStrategy*> strategies;
+  std::vector<SmartSprite*> smart_items;
+  bool collision;
+  int currentStrategy;
 
   bool makeVideo;
 
@@ -41,6 +50,7 @@ private:
   void update(Uint32);
 
   Engine& operator=(const Engine&);
-  void printScales() const;
+  //void printScales() const;
   void checkForCollisions();
+  void addMultiItem(const std::string&, int);
 };

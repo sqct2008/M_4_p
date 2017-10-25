@@ -5,7 +5,9 @@
 #include <string>
 #include "vector2f.h"
 #include "image.h"
- 
+
+extern Vector2f makeVelocity( const Vector2f& );
+
 // Drawable is an Abstract Base Class (ABC) that specifies the methods
 // that derived classes may or must have.
 class Drawable {
@@ -55,3 +57,5 @@ private:
   float scale;
 };
 #endif
+
+

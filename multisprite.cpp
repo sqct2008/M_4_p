@@ -14,13 +14,12 @@ MultiSprite::MultiSprite( const std::string& name) :
   Drawable(name, 
            Vector2f(Gamedata::getInstance().getXmlInt(name+"/startLoc/x"), 
                     Gamedata::getInstance().getXmlInt(name+"/startLoc/y")), 
-           Vector2f(Gamedata::getInstance().getXmlInt(name+"/speedX"),
-                    Gamedata::getInstance().getXmlInt(name+"/speedY"))
+           makeVelocity(Vector2f(Gamedata::getInstance().getXmlInt(name+"/speedX"),
+                    Gamedata::getInstance().getXmlInt(name+"/speedY")))
            ),
   images( RenderContext::getInstance()->getImages(name) ),
-
   currentFrame(0),
-  currentAction(right),
+  currentAction(goRight),
   numberOfFrames( Gamedata::getInstance().getXmlInt(name+"/frames") ),
   numberOfActions( Gamedata::getInstance().getXmlInt(name+"/actions") ),
   frameInterval( Gamedata::getInstance().getXmlInt(name+"/frameInterval")),
@@ -76,8 +75,8 @@ void MultiSprite::update(Uint32 ticks) {
   if ( getX() < 0) {
     setVelocityX( fabs( getVelocityX() ) );
     if( numberOfActions > 1 ){
-      if( currentAction == left ){
-        currentAction = right;
+      if( currentAction == goLeft ){
+        currentAction = goRight;
         //currentAction %= numberOfActions;
       }
     }
@@ -85,8 +84,8 @@ void MultiSprite::update(Uint32 ticks) {
   if ( getX() > worldWidth-getScaledWidth()) {
     setVelocityX( -fabs( getVelocityX() ) );
     if( numberOfActions > 1 ){
-      if( currentAction == right ){
-        currentAction = left;
+      if( currentAction == goRight ){
+        currentAction = goLeft;
         //currentAction %= numberOfActions;
       }
     }

@@ -30,6 +30,5 @@ protected:
   int worldHeight;
 
   int getDistance(const Sprite*) const;
-  Vector2f makeVelocity(int, int) const;
 };
 #endif

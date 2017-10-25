@@ -1,6 +1,6 @@
 <?xml version = "1.0"?>
 <GameData>
-<!-- screenTitle is also used to identify you and your animation.
+<!-- screenTitle is also used to identify you and your animation. 
      So make sure to include your name as part of the screenTitle -->
 <title>The Tracker Framework</title>
 <maxStringSize>50</maxStringSize>
@@ -10,7 +10,7 @@
 
 <makeVideo>false</makeVideo>
 
-<maxFrames>900</maxFrames>
+<maxFrames>300</maxFrames>
 <username>Jingbei</username>
 
 <view>
@@ -51,14 +51,20 @@
 </font>
 
 <drawableItem>
-  <numOfItem>5</numOfItem>
+  <numOfItem>6</numOfItem>
+  <numOfSprite>1</numOfSprite>
+  <numOfMultiSprite>4</numOfMultiSprite>
+  <numOfSmartItem>0</numOfSmartItem>
+  <numOfPlayer>1</numOfPlayer>
   <multiSprite_list>yellowBird,redBird,greenBird,SpinningStar</multiSprite_list>
   <sprite_list>YellowStar</sprite_list>
+  <player_list>greenBird</player_list>
 </drawableItem>
 
 <yellowBird>
   <file>assets/yellowbird.png</file>
   <startLoc x="50" y="140"/>
+  <numOfItem>2</numOfItem>
   <frames>8</frames>
   <actions>1</actions>
   <imageWidth>32</imageWidth>
@@ -67,11 +73,13 @@
   <speedX>350</speedX>
   <speedY>250</speedY>
   <transparency>false</transparency>
+  <safeDistance>100</safeDistance>
 </yellowBird>
 
 <redBird>
   <file>assets/redbird.png</file>
   <startLoc x="50" y="140"/>
+  <numOfItem>1</numOfItem>
   <frames>8</frames>
   <actions>1</actions>
   <imageWidth>31</imageWidth>
@@ -85,19 +93,21 @@
 <greenBird>
   <file>assets/greenbird.png</file>
   <startLoc x="50" y="140"/>
+  <numOfItem>1</numOfItem>
   <frames>4</frames>
   <actions>2</actions>
   <imageWidth>125</imageWidth>
   <imageHeight>125</imageHeight>
   <frameInterval>300</frameInterval>
   <speedX>350</speedX>
-  <speedY>150</speedY>
+  <speedY>350</speedY>
   <transparency>false</transparency>
 </greenBird>
 
 <SpinningStar>
   <file>assets/spinstar.png</file>
   <startLoc x="50" y="140"/>
+  <numOfItem>1</numOfItem>
   <frames>4</frames>
   <actions>1</actions>
   <imageWidth>32</imageWidth>
@@ -111,6 +121,7 @@
 <YellowStar>
   <file>assets/yellowstar32.png</file>
   <startLoc x="227" y="240"/>
+  <numOfItem>1</numOfItem>
   <speedX>300</speedX>
   <speedY>300</speedY>
   <transparency>false</transparency>
