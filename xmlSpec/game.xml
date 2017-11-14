@@ -1,6 +1,6 @@
 <?xml version = "1.0"?>
 <GameData>
-<!-- screenTitle is also used to identify you and your animation. 
+<!-- screenTitle is also used to identify you and your animation.
      So make sure to include your name as part of the screenTitle -->
 <title>The Tracker Framework</title>
 <maxStringSize>50</maxStringSize>
@@ -10,7 +10,7 @@
 
 <makeVideo>false</makeVideo>
 
-<maxFrames>300</maxFrames>
+<maxFrames>900</maxFrames>
 <username>Jingbei</username>
 
 <view>
@@ -51,15 +51,16 @@
 </font>
 
 <Hud>
+  <maxTime>200</maxTime>
   <color>
-    <red>255</red>
-    <green>0</green>
+    <red>245</red>
+    <green>230</green>
     <blue>0</blue>
   </color>
   <string_list>focusPlayer,control,focus,hud</string_list>
-  <focusPlayer>'c' to focus player</focusPlayer>
+  <focusPlayer>'c' to focus on player</focusPlayer>
   <control>'w','a','d','s' to move player</control>
-  <focus>'t' to change focus to other elements</focus>
+  <focus>'t' to change focus on other elements</focus>
   <hud>'F1' to pop up this hud</hud>
 </Hud>
 
