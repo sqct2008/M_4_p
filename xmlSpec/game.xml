@@ -50,6 +50,19 @@
   <alpha>0</alpha>
 </font>
 
+<Hud>
+  <color>
+    <red>255</red>
+    <green>0</green>
+    <blue>0</blue>
+  </color>
+  <string_list>focusPlayer,control,focus,hud</string_list>
+  <focusPlayer>'c' to focus player</focusPlayer>
+  <control>'w','a','d','s' to move player</control>
+  <focus>'t' to change focus to other elements</focus>
+  <hud>'F1' to pop up this hud</hud>
+</Hud>
+
 <drawableItem>
   <numOfItem>6</numOfItem>
   <numOfSprite>1</numOfSprite>

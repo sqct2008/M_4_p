@@ -14,6 +14,7 @@
 #include "collisionStrategy.h"
 #include "splitString.h"
 #include "smartSprite.h"
+#include "hud.h"
 
 Engine::~Engine() { 
   delete player;
@@ -51,7 +52,8 @@ Engine::Engine() :
   strategies(),
   collision(false),
   currentStrategy(0),
-  makeVideo( Gamedata::getInstance().getXmlBool("makeVideo") )
+  makeVideo( Gamedata::getInstance().getXmlBool("makeVideo") ),
+  showHud( true )
 {
 
   num_of_drawable = Gamedata::getInstance().getXmlInt("drawableItem/numOfItem");
@@ -87,8 +89,8 @@ Engine::Engine() :
   Vector2f pos = player->getPosition();
   int w = player->getScaledWidth();
   int h = player->getScaledHeight();
-  smart_items.reserve(2);
-  for (int i = 0; i < 2; ++i) {
+  smart_items.reserve(10);
+  for (int i = 0; i < 10; ++i) {
     SmartSprite* sSprite = new SmartSprite("yellowBird", pos, w, h);
     smart_items.push_back( sSprite );
     player->attach( sSprite );
@@ -116,6 +118,11 @@ void Engine::draw() const {
   worldSky.draw();
   worldMountain.draw();
   worldGrass.draw();
+
+  if(showHud) {
+    Hud::getInstance().draw();
+    return;
+  }
 
   //for( auto& world : worlds ){
   //  world.draw();
@@ -175,6 +182,13 @@ void Engine::checkForCollisions() {
 
 }
 void Engine::update(Uint32 ticks) {
+  static int t = 0;
+  static int maxTime = Gamedata::getInstance().getXmlInt( "Hud/maxTime" );
+  ++t;
+  if( t > maxTime ) {
+    showHud = false;
+    t = 0;
+  }
   checkForCollisions();
   player->update(ticks);
   for( auto& multiSprite: items_drawable ){
@@ -229,7 +243,10 @@ void Engine::play() {
         if ( keystate[SDL_SCANCODE_M] ) {
           currentStrategy = (1 + currentStrategy) % strategies.size();
         }
-        if (keystate[SDL_SCANCODE_F4] && !makeVideo) {
+        if ( keystate[SDL_SCANCODE_F1] ) {
+          showHud = showHud ? false : true;
+        }
+        if ( keystate[SDL_SCANCODE_F4] && !makeVideo ) {
           std::cout << "Initiating frame capture" << std::endl;
           makeVideo = true;
         }

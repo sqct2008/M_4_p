@@ -45,6 +45,7 @@ private:
   int currentStrategy;
 
   bool makeVideo;
+  bool showHud;
 
   void draw() const;
   void update(Uint32);
