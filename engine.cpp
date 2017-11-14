@@ -16,7 +16,7 @@
 #include "smartSprite.h"
 #include "hud.h"
 
-Engine::~Engine() { 
+Engine::~Engine() {
   delete player;
   for( auto& item : items_drawable ){
     delete item;
@@ -65,8 +65,8 @@ Engine::Engine() :
   std::string sprite_list_str = Gamedata::getInstance().getXmlStr("drawableItem/sprite_list");
 
   items_drawable.reserve(num_of_drawable);
-  std::vector<std::string> multiSprite_list; 
-  std::vector<std::string> sprite_list; 
+  std::vector<std::string> multiSprite_list;
+  std::vector<std::string> sprite_list;
   SplitString::split(multiSprite_list_str, multiSprite_list, ",");
   SplitString::split(sprite_list_str, sprite_list, ",");
 
@@ -96,7 +96,7 @@ Engine::Engine() :
     player->attach( sSprite );
   }
 
-  
+
   //for( int i = 0; i < num_of_Sprite; ++i ){
   //  int numOfItem = Gamedata::getInstance().getXmlInt(multiSprite_list[i] + "/numOfItem");
   //  if ( numOfItem == 1 )
@@ -121,6 +121,7 @@ void Engine::draw() const {
 
   if(showHud) {
     Hud::getInstance().draw();
+    SDL_RenderPresent(renderer);
     return;
   }
 
@@ -181,16 +182,11 @@ void Engine::checkForCollisions() {
   //}
 
 }
+static int t = 0;
 void Engine::update(Uint32 ticks) {
-  static int t = 0;
-  static int maxTime = Gamedata::getInstance().getXmlInt( "Hud/maxTime" );
-  ++t;
-  if( t > maxTime ) {
-    showHud = false;
-    t = 0;
-  }
-  checkForCollisions();
+
   player->update(ticks);
+
   for( auto& multiSprite: items_drawable ){
     multiSprite->update(ticks);
   }
@@ -201,10 +197,20 @@ void Engine::update(Uint32 ticks) {
   worldSky.update();
   worldMountain.update();
   worldGrass.update();
-  //for( auto& world : worlds ){
-  //  world.update();
-  //}
-  viewport.update(); // always update viewport last
+  // handle hud update
+  static int maxTime = Gamedata::getInstance().getXmlInt( "Hud/maxTime" );
+  if(showHud) {
+    if( t < maxTime )
+        ++t;
+    else {
+        showHud = false;
+        t = 0;
+    }
+  }
+  else {
+    checkForCollisions();
+    viewport.update(); // always update viewport last
+  }
 }
 
 void Engine::switchSprite(){
@@ -245,6 +251,7 @@ void Engine::play() {
         }
         if ( keystate[SDL_SCANCODE_F1] ) {
           showHud = showHud ? false : true;
+          t = 0;
         }
         if ( keystate[SDL_SCANCODE_F4] && !makeVideo ) {
           std::cout << "Initiating frame capture" << std::endl;
