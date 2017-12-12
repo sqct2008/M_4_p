@@ -1,6 +1,6 @@
 #ifndef DRAWABLE__H
 #define DRAWABLE__H
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <iostream>
 #include <string>
 #include "vector2f.h"
@@ -50,6 +50,8 @@ public:
   void  setVelocityX(float vx) { velocity[0] = vx;   }
   float getVelocityY() const   { return velocity[1]; }
   void  setVelocityY(float vy) { velocity[1] = vy;   }
+
+  virtual void explode() { throw std::string("I don't explode"); }
 private:
   std::string name;
   Vector2f position;

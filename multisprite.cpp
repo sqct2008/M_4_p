@@ -1,6 +1,7 @@
 #include "multisprite.h"
 #include "gamedata.h"
 #include "renderContext.h"
+#include "explodingSprite.h"
 
 void MultiSprite::advanceFrame(Uint32 ticks) {
 	timeSinceLastFrame += ticks;
@@ -53,6 +54,13 @@ MultiSprite& MultiSprite::operator=(const MultiSprite& s) {
   worldWidth = ( s.worldWidth );
   worldHeight = ( s.worldHeight );
   return *this;
+}
+
+void MultiSprite::explode() {
+  if ( !explosion ) {
+    Sprite sprite(getName(), getPosition(), getVelocity(), images[currentFrame]);
+    explosion = new ExplodingSprite(sprite);
+  }
 }
 
 void MultiSprite::draw() const { 

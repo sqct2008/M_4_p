@@ -5,6 +5,8 @@
 #include <cmath>
 #include "drawable.h"
 
+class ExplodingSprite;
+
 class MultiSprite : public Drawable {
 public:
   MultiSprite(const std::string&);
@@ -26,8 +28,11 @@ public:
     return images[currentFrame]->getSurface();
   }
 
+  virtual void explode();
+
 protected:
   std::vector<Image *> images;
+  ExplodingSprite* explosion;
 
   enum Actions { goRight, goLeft };
   unsigned currentFrame;

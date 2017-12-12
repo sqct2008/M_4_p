@@ -14,6 +14,7 @@
 #include "collisionStrategy.h"
 #include "splitString.h"
 #include "smartSprite.h"
+#include "boss.h"
 #include "hud.h"
 
 Engine::~Engine() {
@@ -242,6 +243,9 @@ void Engine::play() {
         }
         if ( keystate[SDL_SCANCODE_T] ) {
           switchSprite();
+        }
+        if ( keystate[SDL_SCANCODE_SPACE] ) {
+          player -> shoot();
         }
         if ( keystate[SDL_SCANCODE_C] ){
           Viewport::getInstance().setObjectToTrack(player);

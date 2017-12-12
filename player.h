@@ -4,14 +4,19 @@
 #include <string>
 #include <list>
 #include "multisprite.h"
+#include "bullet.h"
 
 class SmartSprite;
+class Bullet;
 
 class Player : public MultiSprite {
 public:
   Player(const std::string&);
   Player(const Player&);
   virtual void update(Uint32 ticks);
+  virtual void draw() const;
+
+  void shoot();
 
   void collided() { collision = true; }
   void missed() { collision = false; }
@@ -27,6 +32,11 @@ public:
   void stop();
 private:
   bool collision;
+  std::string bulletName;
+  std::list<Bullet> bullets;
+  float minSpeed;
+  float bulletInterval;
+  float timeSinceLastFrame;
   std::list<SmartSprite*> observers;
   Vector2f initialVelocity;
 };

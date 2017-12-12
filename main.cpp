@@ -3,6 +3,7 @@
 
 RenderContext* RenderContext::instance = NULL;
 
+
 int main(int, char*[]) {
    try {
       Engine engine;

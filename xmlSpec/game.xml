@@ -116,7 +116,18 @@
   <speedX>350</speedX>
   <speedY>350</speedY>
   <transparency>false</transparency>
+  <bullet>normal_bullet</bullet>
 </greenBird>
+
+<normal_bullet>
+  <file>assets/yellowstar32.png</file>
+  <startLoc x="227" y="240"/>
+  <numOfItem>1</numOfItem>
+  <speedX>300</speedX>
+  <speedY>0</speedY>
+  <transparency>false</transparency>
+  <interval>200</interval>
+</normal_bullet>
 
 <SpinningStar>
   <file>assets/spinstar.png</file>
