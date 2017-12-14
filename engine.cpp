@@ -16,14 +16,20 @@
 #include "smartSprite.h"
 #include "boss.h"
 #include "hud.h"
+#include "poolHud.h"
 
 Engine::~Engine() {
   delete player;
+  delete boss;
+  delete poolHud;
   for( auto& item : items_drawable ){
     delete item;
   }
   for( auto& smart_item : smart_items ){
     delete smart_item;
+  }
+  for( auto& far_item : far_drawable ){
+    delete far_item;
   }
   for( auto& strategy : strategies ){
     delete strategy;
@@ -31,12 +37,13 @@ Engine::~Engine() {
   std::cout << "Terminating program" << std::endl;
 }
 
-void Engine::addMultiItem(const std::string& spriteName, int numOfItem){
+void Engine::addMultiItem(std::vector<Drawable*>& dList, const std::string& spriteName, int numOfItem){
   int i = 0;
   while( i < numOfItem ){
-    items_drawable.push_back(new MultiSprite(spriteName));
+    dList.push_back(new MultiSprite(spriteName));
     ++i;
   }
+    //player->attach( smart_items[i] );
 }
 
 Engine::Engine() :
@@ -50,54 +57,92 @@ Engine::Engine() :
   viewport( Viewport::getInstance() ),
   currentSprite(0),
   player(new Player(Gamedata::getInstance().getXmlStr( "drawableItem/player_list" ))),
+  boss(new MultiSprite(Gamedata::getInstance().getXmlStr( "drawableItem/Boss" ))),
+  far_drawable(),
+  items_drawable(),
+  smart_items(),
   strategies(),
   collision(false),
-  currentStrategy(0),
+  currentStrategy(1),
   makeVideo( Gamedata::getInstance().getXmlBool("makeVideo") ),
-  showHud( true )
+  showHud( true ),
+  gameOver(false),
+  poolHud(new PoolHud(*player)),
+  smartCount(0)
 {
+  clock.startClock();
 
   num_of_drawable = Gamedata::getInstance().getXmlInt("drawableItem/numOfItem");
   num_of_sprite = Gamedata::getInstance().getXmlInt("drawableItem/numOfSprite");
   num_of_multiSprite = Gamedata::getInstance().getXmlInt("drawableItem/numOfMultiSprite");
   num_of_player = Gamedata::getInstance().getXmlInt("drawableItem/numOfPlayer");
   num_of_smartItem = Gamedata::getInstance().getXmlInt("drawableItem/numOfSmartItem");
-  std::string multiSprite_list_str = Gamedata::getInstance().getXmlStr("drawableItem/multiSprite_list");
-  std::string sprite_list_str = Gamedata::getInstance().getXmlStr("drawableItem/sprite_list");
+  int num_of_farItem = Gamedata::getInstance().getXmlInt("drawableItem/numOfFarItem");
 
-  items_drawable.reserve(num_of_drawable);
-  std::vector<std::string> multiSprite_list;
-  std::vector<std::string> sprite_list;
-  SplitString::split(multiSprite_list_str, multiSprite_list, ",");
-  SplitString::split(sprite_list_str, sprite_list, ",");
+  std::string multiSprite_list_str;
+  std::string sprite_list_str;
+  std::string smart_list_str;
+  std::string far_list_str;
 
-  for( int i = 0; i < num_of_sprite; ++i ){
-    int numOfItem = Gamedata::getInstance().getXmlInt(sprite_list[i] + "/numOfItem");
-    if ( numOfItem == 1 )
-      items_drawable.push_back(new Sprite(sprite_list[i]));
-    //else
-    //  addMultiItem(sprite_list[i], numOfItem);
+  if(num_of_multiSprite) {
+    multiSprite_list_str = Gamedata::getInstance().getXmlStr("drawableItem/multiSprite_list");
+    std::vector<std::string> multiSprite_list;
+    SplitString::split(multiSprite_list_str, multiSprite_list, ",");
+    for( int i = 0; i < num_of_multiSprite; ++i ){
+      int numOfItem = Gamedata::getInstance().getXmlInt(multiSprite_list[i] + "/numOfItem");
+      if ( numOfItem == 1 )
+        items_drawable.push_back(new MultiSprite(multiSprite_list[i]));
+      else
+        addMultiItem(items_drawable, multiSprite_list[i], numOfItem);
+    }
   }
+  if(num_of_sprite) {
+    sprite_list_str = Gamedata::getInstance().getXmlStr("drawableItem/sprite_list");
+    std::vector<std::string> sprite_list;
+    SplitString::split(sprite_list_str, sprite_list, ",");
+    for( int i = 0; i < num_of_sprite; ++i ){
+      int numOfItem = Gamedata::getInstance().getXmlInt(sprite_list[i] + "/numOfItem");
+      if ( numOfItem == 1 )
+        items_drawable.push_back(new Sprite(sprite_list[i]));
+      else
+        addMultiItem(items_drawable, sprite_list[i], numOfItem);
+    }
 
-  for( int i = 0; i < num_of_multiSprite; ++i ){
-    int numOfItem = Gamedata::getInstance().getXmlInt(multiSprite_list[i] + "/numOfItem");
-    if ( numOfItem == 1 )
-      items_drawable.push_back(new MultiSprite(multiSprite_list[i]));
-    else
-      addMultiItem(multiSprite_list[i], numOfItem);
   }
-
-  Vector2f pos = player->getPosition();
-  int w = player->getScaledWidth();
-  int h = player->getScaledHeight();
-  smart_items.reserve(10);
-  for (int i = 0; i < 10; ++i) {
-    SmartSprite* sSprite = new SmartSprite("yellowBird", pos, w, h);
-    smart_items.push_back( sSprite );
-    player->attach( sSprite );
+  if(num_of_smartItem) {
+    smart_list_str = Gamedata::getInstance().getXmlStr("drawableItem/smart_list");
+    std::vector<std::string> smart_list;
+    SplitString::split(smart_list_str, smart_list, ",");
+    Vector2f pos = player->getPosition();
+    int w = player->getScaledWidth();
+    int h = player->getScaledHeight();
+    for (int i = 0; i < num_of_smartItem; ++i) {
+      for(int j=0; j<3; j++) {
+        smart_items.push_back(new SmartSprite(smart_list[i], pos, w, h));
+        player->attach( smart_items[i+j] );
+      }
+    }
+    smartCount = num_of_smartItem * 3;
   }
+  if(num_of_farItem) {
+    far_list_str = Gamedata::getInstance().getXmlStr("drawableItem/far_list");
+    std::vector<std::string> far_list;
+    SplitString::split(far_list_str, far_list, ",");
+    for( int i = 0; i < num_of_farItem; ++i ){
+      int numOfItem = Gamedata::getInstance().getXmlInt(far_list[i] + "/numOfItem");
+      if ( numOfItem == 1 )
+        far_drawable.push_back(new MultiSprite(far_list[i]));
+      else
+        addMultiItem(far_drawable, far_list[i], numOfItem);
+    }
 
+    for(auto it : far_drawable) {
+      it -> setScale(0.4);
+      it -> setVelocityX(it->getVelocityX()*0.7);
+      it -> setVelocityY(it->getVelocityY()*0.2);
+    }
 
+  }
   //for( int i = 0; i < num_of_Sprite; ++i ){
   //  int numOfItem = Gamedata::getInstance().getXmlInt(multiSprite_list[i] + "/numOfItem");
   //  if ( numOfItem == 1 )
@@ -111,20 +156,27 @@ Engine::Engine() :
   strategies.push_back( new PerPixelCollisionStrategy );
   strategies.push_back( new MidPointCollisionStrategy );
 
-  Viewport::getInstance().setObjectToTrack(items_drawable[0]);
+  Viewport::getInstance().setObjectToTrack(player);
   std::cout << "Loading complete" << std::endl;
 }
 
 void Engine::draw() const {
   worldSky.draw();
-  worldMountain.draw();
-  worldGrass.draw();
 
   if(showHud) {
+    worldMountain.draw();
+    worldGrass.draw();
     Hud::getInstance().draw();
     SDL_RenderPresent(renderer);
     return;
   }
+  else if(gameOver)
+    clock.pause();
+  worldMountain.draw();
+  for(auto it : far_drawable) {
+    it -> draw();
+  }
+  worldGrass.draw();
 
   //for( auto& world : worlds ){
   //  world.draw();
@@ -136,11 +188,14 @@ void Engine::draw() const {
   for( auto& smart_item : smart_items ){
     smart_item->draw();
   }
+  if(poolHud -> isShowHud())
+    poolHud -> draw();
   strategies[currentStrategy]->draw();
-  if ( collision ) {
-    IOmod::getInstance().writeText("Oops: Collision", 500, 90);
-  }
+  //if ( collision ) {
+  //  IOmod::getInstance().writeText("Oops: Collision", 500, 90);
+  //}
   player->draw();
+  boss->draw();
   viewport.draw();
 
   std::stringstream ss;
@@ -154,13 +209,17 @@ void Engine::draw() const {
 
 void Engine::checkForCollisions() {
   collision = false;
-  for ( const Drawable* d : items_drawable ) {
-    if ( strategies[currentStrategy]->execute(*player, *d) ) {
-      collision = true;
-    }
-  }
+  if ( strategies[currentStrategy]->execute(*player, *boss) )
+    collision = true;
+
+  //for ( const Drawable* d : items_drawable ) {
+  //  if ( strategies[currentStrategy]->execute(*player, *d) ) {
+  //    collision = true;
+  //  }
+  //}
   if ( collision ) {
-    player->collided();
+    //player->collided();
+    player->explode();    
   }
   else {
     player->missed();
@@ -183,11 +242,38 @@ void Engine::checkForCollisions() {
   //}
 
 }
+
+void Engine::checkForBulletsCollisions() {
+  std::list<Bullet>& bulletList = player->getBulletList();
+  if (bulletList.size() > 0) {
+    std::list<Bullet>::iterator it = bulletList.begin();
+    while (it != bulletList.end()) {
+      auto its = smart_items.begin();
+      while (its != smart_items.end()) {
+        SmartSprite* doa = *its;
+        if ( strategies[currentStrategy]->execute(*it, *doa) && !doa->isCollided()) {         
+          //unsigned int balloonColor = doa->getCurrentFrame();
+          player->detach(doa);
+          doa->collided();
+          doa->explode();    
+          smartCount--;
+        }
+        its++;     
+      } 
+      it++;  
+    }
+  }
+
+}
+
 static int t = 0;
 void Engine::update(Uint32 ticks) {
-
   player->update(ticks);
+  boss->update(ticks);
 
+  for( auto& far_item : far_drawable ){
+    far_item->update(ticks);
+  }
   for( auto& multiSprite: items_drawable ){
     multiSprite->update(ticks);
   }
@@ -209,8 +295,13 @@ void Engine::update(Uint32 ticks) {
     }
   }
   else {
+    checkForBulletsCollisions();
     checkForCollisions();
     viewport.update(); // always update viewport last
+  }
+    //std::cout << smartCount << std::endl;
+  if (smartCount == 0) {
+    gameOver = true;
   }
 }
 
@@ -220,7 +311,7 @@ void Engine::switchSprite(){
   Viewport::getInstance().setObjectToTrack(items_drawable[currentSprite]);
 }
 
-void Engine::play() {
+bool Engine::play() {
   SDL_Event event;
   const Uint8* keystate;
   bool done = false;
@@ -244,14 +335,14 @@ void Engine::play() {
         if ( keystate[SDL_SCANCODE_T] ) {
           switchSprite();
         }
-        if ( keystate[SDL_SCANCODE_SPACE] ) {
-          player -> shoot();
-        }
         if ( keystate[SDL_SCANCODE_C] ){
           Viewport::getInstance().setObjectToTrack(player);
         }
         if ( keystate[SDL_SCANCODE_M] ) {
           currentStrategy = (1 + currentStrategy) % strategies.size();
+        }
+        if ( keystate[SDL_SCANCODE_H] ) {
+          poolHud -> setShow();
         }
         if ( keystate[SDL_SCANCODE_F1] ) {
           showHud = showHud ? false : true;
@@ -265,6 +356,10 @@ void Engine::play() {
           std::cout << "Terminating frame capture" << std::endl;
           makeVideo = false;
         }
+        if ( keystate[SDL_SCANCODE_F5] ) {
+          std::cout << "Restart the game" << std::endl;
+          return true;
+        }
       }
     }
 
@@ -272,6 +367,9 @@ void Engine::play() {
     ticks = clock.getElapsedTicks();
     if ( ticks > 0 ) {
       clock.incrFrame();
+        if ( keystate[SDL_SCANCODE_SPACE] ) {
+          player -> shoot();
+        }
       if (keystate[SDL_SCANCODE_A]) {
         player->left();
       }
@@ -291,4 +389,5 @@ void Engine::play() {
       }
     }
   }
+  return false;
 }

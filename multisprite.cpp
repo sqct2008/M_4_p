@@ -64,10 +64,24 @@ void MultiSprite::explode() {
 }
 
 void MultiSprite::draw() const { 
-  images[currentFrame]->draw(getX(), getY(), getScale());
+  if (explosion) {
+    explosion->draw();
+  }
+  else {
+    images[currentFrame]->draw(getX(), getY(), getScale());
+  }  
 }
 
 void MultiSprite::update(Uint32 ticks) { 
+  if (explosion) {
+    explosion->update(ticks);
+    if (explosion->chunkCount() == 0) {
+      //delete explosion;
+      //explosion = NULL;
+    }
+    return;
+  }
+
   advanceFrame(ticks);
 
   Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;

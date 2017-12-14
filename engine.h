@@ -8,13 +8,15 @@
 
 class Player;
 class SmartSprite;
+class MultiSprite;
 class CollisionStrategy;
+class PoolHud;
 
 class Engine {
 public:
   Engine ();
   ~Engine ();
-  void play();
+  bool play();
   void switchSprite();
   Engine( const Engine& ) = delete;
 
@@ -38,14 +40,18 @@ private:
   int num_of_smartItem = 0;
 
   Player* player;
+  MultiSprite* boss;
+  std::vector<Drawable*> far_drawable;
   std::vector<Drawable*> items_drawable;
-  std::vector<CollisionStrategy*> strategies;
   std::vector<SmartSprite*> smart_items;
+  std::vector<CollisionStrategy*> strategies;
   bool collision;
   int currentStrategy;
 
   bool makeVideo;
   bool showHud;
+  bool gameOver;
+  PoolHud* poolHud;
 
   void draw() const;
   void update(Uint32);
@@ -53,5 +59,7 @@ private:
   Engine& operator=(const Engine&);
   //void printScales() const;
   void checkForCollisions();
-  void addMultiItem(const std::string&, int);
+  void checkForBulletsCollisions();
+  void addMultiItem(std::vector<Drawable*>&, const std::string&, int);
+  int smartCount;
 };

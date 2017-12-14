@@ -9,10 +9,15 @@ public:
   SmartSprite(const SmartSprite&);
   virtual ~SmartSprite() { } 
 
+  void collided() { collision = true; }
+  void missed() { collision = false; }
+  bool isCollided() { return collision; }
+
   virtual void update(Uint32 ticks);
   void setPlayerPos(const Vector2f& p) { playerPos = p; }
 
 private:
+  bool collision = false;
   enum MODE {NORMAL, EVADE};
   Vector2f playerPos;
   int playerWidth;

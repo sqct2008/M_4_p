@@ -67,16 +67,17 @@
 <drawableItem>
   <numOfItem>6</numOfItem>
   <numOfSprite>0</numOfSprite>
-  <numOfMultiSprite>0</numOfMultiSprite>
+  <numOfMultiSprite>2</numOfMultiSprite>
   <numOfSmartItem>2</numOfSmartItem>
   <numOfFarItem>2</numOfFarItem>
   <numOfPlayer>1</numOfPlayer>
-  <multiSprite_list></multiSprite_list>
+  <numOfBoss>2<numOfBoss>
+  <multiSprite_list>yellowBird,redBird</multiSprite_list>
   <far_list>yellowBird,redBird</far_list>
-  <sprite_list></sprite_list>
+  <sprite_list>YellowStar</sprite_list>
   <player_list>greenBird</player_list>
   <smart_list>yellowBird,redBird</smart_list>
-  <Boss>greenbird_y</Boss>
+  <Boss>greenBird</Boss>
 </drawableItem>
 
 <yellowBird>
@@ -117,48 +118,29 @@
   </chunk>
 </redBird>
 
-<greenbird_y>
-  <file>assets/greenbird_y.png</file>
-  <startLoc x="800" y="240"/>
+<greenBird>
+  <file>assets/greenbird.png</file>
+  <startLoc x="50" y="140"/>
   <numOfItem>1</numOfItem>
   <frames>4</frames>
   <actions>2</actions>
   <imageWidth>125</imageWidth>
   <imageHeight>125</imageHeight>
   <frameInterval>300</frameInterval>
-  <speedX>150</speedX>
-  <speedY>150</speedY>
+  <speedX>350</speedX>
+  <speedY>350</speedY>
   <transparency>false</transparency>
   <bullet>normal_bullet</bullet>
-</greenbird_y>
-
-<greenBird>
-  <file>assets/greenbird.png</file>
-  <startLoc x="200" y="240"/>
-  <numOfItem>1</numOfItem>
-  <frames>4</frames>
-  <actions>2</actions>
-  <imageWidth>125</imageWidth>
-  <imageHeight>125</imageHeight>
-  <frameInterval>800</frameInterval>
-  <speedX>150</speedX>
-  <speedY>150</speedY>
-  <transparency>false</transparency>
-  <bullet>normal_bullet</bullet>
-  <chunk>
-    <size>19</size>
-    <distance>30</distance>
-  </chunk>
 </greenBird>
 
 <normal_bullet>
   <file>assets/yellowstar32.png</file>
   <startLoc x="227" y="240"/>
   <numOfItem>1</numOfItem>
-  <speedX>500</speedX>
+  <speedX>300</speedX>
   <speedY>0</speedY>
   <transparency>false</transparency>
-  <distance>700</distance>
+  <distance>500</distance>
   <interval>400</interval>
 </normal_bullet>
 

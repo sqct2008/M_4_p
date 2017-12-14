@@ -3,7 +3,7 @@
 #include "gamedata.h"
 #include "splitString.h"
 
-Hud::Hud() {
+Hud::Hud() : color(), strings() {
   std::string stringList = Gamedata::getInstance().getXmlStr( "Hud/string_list" );
   std::vector<std::string> stringVec;
   SplitString::split(stringList, stringVec, ",");

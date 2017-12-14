@@ -6,7 +6,7 @@
 # Modifications to the original Makefile are contributed by
 #  Zachary Sullivan, Fall 2017
 
-CXX = clang++
+CXX = g++
 
 DEPDIR := .deps
 $(shell mkdir -p $(DEPDIR) >/dev/null)

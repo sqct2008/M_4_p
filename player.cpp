@@ -1,5 +1,7 @@
 #include "player.h"
 #include "smartSprite.h"
+#include "bullet.h"
+#include "explodingSprite.h"
 //#include "gamedata.h"
 
 Player::Player( const std::string& name) :
@@ -7,9 +9,10 @@ Player::Player( const std::string& name) :
   collision(false),
   bulletName( Gamedata::getInstance().getXmlStr(name+"/bullet") ),
   bullets(),
+  poolBullets(),
   minSpeed( Gamedata::getInstance().getXmlInt(bulletName+"/speedX") ),
   bulletInterval(Gamedata::getInstance().getXmlInt(bulletName+"/interval")),
-  timeSinceLastFrame(0),
+  timeSinceLastShoot(0),
   observers(),
   initialVelocity(getVelocity())
 { std::cout << getVelocity() << std::endl;}
@@ -19,9 +22,10 @@ Player::Player(const Player& s) :
   collision(s.collision),
   bulletName(s.bulletName),
   bullets(s.bullets),
+  poolBullets(s.poolBullets),
   minSpeed(s.minSpeed),
   bulletInterval(s.bulletInterval),
-  timeSinceLastFrame(s.timeSinceLastFrame),
+  timeSinceLastShoot(s.timeSinceLastShoot),
   observers(s.observers),
   initialVelocity(s.getVelocity())
   { }
@@ -71,32 +75,54 @@ void Player::detach( SmartSprite* o ) {
   }
 }
 
+void Player::explode() {
+  if ( !explosion ) {
+    Sprite sprite(getName(), getPosition(), getVelocity(), images[currentFrame]);
+    explosion = new ExplodingSprite(sprite);
+  }
+}
+
+static int timeSinceLastExplode = 0;
+
 void Player::update(Uint32 ticks) {
-	timeSinceLastFrame += ticks;
+  if (explosion) {
+    timeSinceLastExplode += ticks;
+    explosion->update(ticks);
+    if (timeSinceLastExplode >= 2000 || explosion->chunkCount() == 0) {
+      timeSinceLastExplode = 0;
+      delete explosion;
+      explosion = NULL;
+    }
+  }
+  else {
+    if ( getVelocityX() > 0) {
+      if( numberOfActions > 1 ){
+        if( currentAction != goRight ){
+          currentAction = goRight;
+        }
+      }
+    }
+    if ( getVelocityX() < 0) {
+      if( numberOfActions > 1 ){
+        if( currentAction != goLeft ){
+          currentAction = goLeft;
+        }
+      }
+    }
+  Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
+  setPosition(getPosition() + incr);
   MultiSprite::update(ticks);
+
   for ( Bullet& bullet : bullets ) {
     bullet.update(ticks);
   }
 
+  }
+
+	timeSinceLastShoot += ticks;
+
   if ( !collision ) advanceFrame(ticks);
 
-  if ( getVelocityX() > 0) {
-    if( numberOfActions > 1 ){
-      if( currentAction != goRight ){
-        currentAction = goRight;
-      }
-    }
-  }
-  if ( getVelocityX() < 0) {
-    if( numberOfActions > 1 ){
-      if( currentAction != goLeft ){
-        currentAction = goLeft;
-      }
-    }
-  }
-
-  Vector2f incr = getVelocity() * static_cast<float>(ticks) * 0.001;
-  setPosition(getPosition() + incr);
 
   std::list<SmartSprite*>::iterator ptr = observers.begin();
   while ( ptr != observers.end() ) {
@@ -104,25 +130,66 @@ void Player::update(Uint32 ticks) {
     ++ptr;
   }
 
+  //timeSinceLastShoot += ticks;
+  std::list<Bullet>::iterator it = bullets.begin();
+  while (it != bullets.end()) {
+    it->update(ticks);
+    if (it->goneTooFar()) {
+      poolBullets.push_back(*it);
+      it = bullets.erase(it);
+    }
+    else {
+      it++;
+    }
+  }
   stop();
 }
 
 void Player::shoot() { 
-  if ( timeSinceLastFrame < bulletInterval ) return;
+  if ( timeSinceLastShoot < bulletInterval ) return;
   float deltaX = getScaledWidth();
   float deltaY = getScaledHeight()/2;
   // I need to add some minSpeed to velocity:
-  Bullet bullet(bulletName);
-  bullet.setPosition( getPosition() +Vector2f(deltaX, deltaY) );
-  bullet.setVelocity( getVelocity() + Vector2f(minSpeed, 0) );
-  bullets.push_back( bullet );
-  timeSinceLastFrame = 0;
+  //bullet.setVelocity( getVelocity() + Vector2f(minSpeed, 0) );
+  if (poolBullets.empty()) {
+    Bullet bullet(bulletName);
+    bullet.setPosition( getPosition() + Vector2f(deltaX, deltaY) );
+    if(currentAction == goLeft) {
+      bullet.setVelocity( getVelocity() + Vector2f(-minSpeed, 0) );
+    }
+    else {
+      bullet.setVelocity( getVelocity() + Vector2f(minSpeed, 0) );
+
+    }
+    //Bullet bullet(bulletName, 1, angle, pos, vel);
+    bullets.push_back(bullet);
+  }
+  else {
+    Bullet bullet = poolBullets.front();
+    poolBullets.pop_front();
+    bullet.setPosition( getPosition() + Vector2f(deltaX, deltaY) );
+    if(currentAction == goLeft) {
+      bullet.setVelocity( getVelocity() + Vector2f(-minSpeed, 0) );
+    }
+    else {
+      bullet.setVelocity( getVelocity() + Vector2f(minSpeed, 0) );
+
+    }
+    bullet.reset();
+    bullets.push_back(bullet);
+  }
+  timeSinceLastShoot = 0;
 }
 
 void Player::draw() const { 
-  MultiSprite::draw();
-  for ( const Bullet& bullet : bullets ) {
-    bullet.draw();
+  if (explosion) {
+    explosion->draw();
+  }
+  else{
+    MultiSprite::draw();
+    for ( const Bullet& bullet : bullets ) {
+      bullet.draw();
+    }
   }
 }
 

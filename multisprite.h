@@ -18,6 +18,9 @@ public:
   virtual const Image* getImage() const { 
     return images[currentFrame]; 
   }
+  virtual int getCurrentFrame() const {
+    return currentFrame;
+  }
   int getScaledWidth()  const { 
     return getScale()*images[currentFrame]->getWidth(); 
   } 
@@ -32,7 +35,7 @@ public:
 
 protected:
   std::vector<Image *> images;
-  ExplodingSprite* explosion;
+  ExplodingSprite* explosion = nullptr;
 
   enum Actions { goRight, goLeft };
   unsigned currentFrame;
